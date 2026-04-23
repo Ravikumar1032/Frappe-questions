@@ -1,95 +1,541 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Frappe / ERPNext — Interview Kit</title>
-  <link rel="stylesheet" href="index.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Frappe/ERPNext Interview Kit — Senior 5 YOE</title>
+<style>
+/* SHARED STYLES — inlined into every page */
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=JetBrains+Mono:wght@400;600&family=Sora:wght@300;400;500;600&display=swap');
+
+:root {
+  --bg: #080b12;
+  --surface: #0e1320;
+  --card: #111827;
+  --card-hover: #141d30;
+  --border: #1e2d47;
+  --border2: #263548;
+  --accent: #3b82f6;
+  --accent-glow: #3b82f620;
+  --green: #34d399;
+  --green-glow: #34d39920;
+  --orange: #f59e0b;
+  --orange-glow: #f59e0b20;
+  --red: #f87171;
+  --text: #e2e8f0;
+  --text2: #94a3b8;
+  --muted: #4b5e7e;
+  --mono: 'JetBrains Mono', monospace;
+  --serif: 'DM Serif Display', serif;
+  --sans: 'Sora', sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 14px;
+  line-height: 1.7;
+  min-height: 100vh;
+}
+
+/* TOPBAR NAV */
+.topbar {
+  position: sticky; top: 0; z-index: 200;
+  background: rgba(8,11,18,0.92);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 32px;
+  height: 54px;
+  display: flex;
+  align-items: center;
+  gap: 0;
+  justify-content: space-between;
+}
+.topbar-left { display: flex; align-items: center; gap: 20px; }
+.topbar-logo {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--green);
+  text-decoration: none;
+  letter-spacing: 1px;
+  white-space: nowrap;
+}
+.topbar-logo span { color: var(--muted); }
+.topbar-nav {
+  display: flex;
+  gap: 2px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.topbar-nav::-webkit-scrollbar { display: none; }
+.nav-link {
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 11px;
+  font-weight: 500;
+  padding: 5px 10px;
+  border-radius: 5px;
+  white-space: nowrap;
+  transition: all 0.15s;
+  letter-spacing: 0.3px;
+}
+.nav-link:hover { color: var(--text); background: var(--surface); }
+.nav-link.active { color: var(--accent); background: var(--accent-glow); }
+
+/* PAGE HERO */
+.page-hero {
+  padding: 48px 40px 40px;
+  border-bottom: 1px solid var(--border);
+  background: linear-gradient(135deg, var(--surface) 0%, var(--bg) 100%);
+  position: relative;
+  overflow: hidden;
+}
+.page-hero::before {
+  content: '';
+  position: absolute;
+  top: -80px; right: -80px;
+  width: 400px; height: 400px;
+  background: radial-gradient(circle, var(--accent-glow) 0%, transparent 65%);
+  pointer-events: none;
+}
+.hero-eyebrow {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--green);
+  margin-bottom: 12px;
+}
+.hero-eyebrow a {
+  color: var(--muted);
+  text-decoration: none;
+  transition: color 0.15s;
+}
+.hero-eyebrow a:hover { color: var(--text); }
+.hero-eyebrow .sep { margin: 0 8px; color: var(--border2); }
+.page-title {
+  font-family: var(--serif);
+  font-size: clamp(26px, 4vw, 42px);
+  color: #fff;
+  line-height: 1.1;
+  margin-bottom: 12px;
+}
+.page-title em { color: var(--accent); font-style: italic; }
+.page-desc {
+  color: var(--text2);
+  max-width: 600px;
+  font-size: 13.5px;
+  line-height: 1.75;
+}
+.hero-stats {
+  display: flex;
+  gap: 20px;
+  margin-top: 24px;
+  flex-wrap: wrap;
+}
+.stat-pill {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--text2);
+}
+.stat-pill b { color: var(--text); font-size: 16px; display: block; }
+
+/* MAIN CONTENT AREA */
+.content { max-width: 960px; margin: 0 auto; padding: 32px 40px 80px; }
+
+/* SECTION HEADING */
+.section-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding: 28px 0 12px;
+  border-top: 1px solid var(--border);
+  margin-top: 12px;
+}
+.section-label:first-child { border-top: none; padding-top: 0; }
+
+/* Q&A CARD */
+.qa-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  margin-bottom: 12px;
+  overflow: hidden;
+  transition: border-color 0.2s;
+}
+.qa-card:hover { border-color: var(--border2); }
+
+.qa-header {
+  padding: 18px 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.qa-num {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--muted);
+  padding-top: 4px;
+  min-width: 22px;
+}
+.qa-meta { flex: 1; }
+.qa-tags {
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+  margin-bottom: 7px;
+}
+.tag {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+.tag-q { background: #3b82f618; border: 1px solid #3b82f640; color: var(--accent); }
+.tag-scenario { background: #34d39918; border: 1px solid #34d39940; color: var(--green); }
+.tag-perf { background: #f59e0b18; border: 1px solid #f59e0b40; color: var(--orange); }
+.tag-warn { background: #f8717118; border: 1px solid #f8717140; color: var(--red); }
+.tag-topic {
+  background: #1e2d47;
+  border: 1px solid var(--border2);
+  color: var(--text2);
+}
+
+.qa-question {
+  font-size: 14.5px;
+  font-weight: 500;
+  color: var(--text);
+  line-height: 1.5;
+}
+.qa-question code {
+  font-family: var(--mono);
+  background: var(--surface);
+  color: var(--orange);
+  padding: 1px 5px;
+  border-radius: 3px;
+  font-size: 12.5px;
+}
+.qa-chevron {
+  color: var(--muted);
+  font-size: 14px;
+  transition: transform 0.25s;
+  padding-top: 4px;
+  flex-shrink: 0;
+}
+.qa-card.open .qa-chevron { transform: rotate(180deg); }
+
+.qa-body {
+  display: none;
+  padding: 0 20px 20px 56px;
+  border-top: 1px solid var(--border);
+}
+.qa-card.open .qa-body { display: block; }
+
+.ans-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--green);
+  margin: 14px 0 10px;
+}
+
+.ans {
+  color: #b0bcd4;
+  font-size: 13.5px;
+  line-height: 1.85;
+}
+.ans p { margin-bottom: 9px; }
+.ans p:last-child { margin-bottom: 0; }
+.ans strong { color: var(--text); font-weight: 600; }
+.ans em { color: var(--orange); font-style: normal; }
+
+.ans code {
+  font-family: var(--mono);
+  background: #0a0f1c;
+  border: 1px solid var(--border);
+  color: var(--orange);
+  padding: 1px 5px;
+  border-radius: 3px;
+  font-size: 12px;
+}
+
+pre.codeblock {
+  font-family: var(--mono);
+  background: #060a12;
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  border-radius: 8px;
+  padding: 14px 16px;
+  font-size: 12px;
+  line-height: 1.75;
+  color: #8fa8cc;
+  overflow-x: auto;
+  margin: 12px 0;
+  white-space: pre;
+}
+pre.codeblock .kw { color: #60a5fa; }
+pre.codeblock .fn { color: #a78bfa; }
+pre.codeblock .str { color: #34d399; }
+pre.codeblock .cm { color: #3d5273; font-style: italic; }
+pre.codeblock .num { color: var(--orange); }
+
+.tip {
+  background: #34d39910;
+  border: 1px solid #34d39928;
+  border-radius: 8px;
+  padding: 11px 14px;
+  margin-top: 12px;
+  font-size: 13px;
+  color: #a7f3d0;
+}
+.tip::before { content: '💡 '; }
+
+.warn {
+  background: #f8717110;
+  border: 1px solid #f8717130;
+  border-radius: 8px;
+  padding: 11px 14px;
+  margin-top: 12px;
+  font-size: 13px;
+  color: #fca5a5;
+}
+.warn::before { content: '⚠️ '; }
+
+/* EXPAND ALL TOOLBAR */
+.toolbar {
+  display: flex;
+  gap: 8px;
+  padding: 16px 0 4px;
+  flex-wrap: wrap;
+}
+.tb-btn {
+  background: var(--card);
+  border: 1px solid var(--border);
+  color: var(--text2);
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-family: var(--sans);
+  cursor: pointer;
+  transition: all 0.15s;
+  font-weight: 500;
+}
+.tb-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+/* FOOTER NAV */
+.page-footer {
+  border-top: 1px solid var(--border);
+  padding: 32px 40px;
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.footer-nav-btn {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  text-decoration: none;
+  padding: 12px 18px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--card);
+  transition: all 0.15s;
+  min-width: 160px;
+}
+.footer-nav-btn:hover { border-color: var(--accent); background: var(--card-hover); }
+.footer-nav-btn .fnb-dir {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.footer-nav-btn .fnb-title {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text);
+}
+.footer-nav-btn.next { text-align: right; }
+
+@media (max-width: 640px) {
+  .topbar { padding: 0 16px; }
+  .page-hero, .content, .page-footer { padding-left: 18px; padding-right: 18px; }
+  .qa-body { padding-left: 18px; }
+  .topbar-nav { display: none; }
+}
+
+.idx-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 14px;
+  padding: 32px 40px 80px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+.idx-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 22px;
+  text-decoration: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.2s, transform 0.15s;
+}
+.idx-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: var(--accent-local);
+  opacity: 0.7;
+}
+.idx-card:hover {
+  border-color: var(--accent-local);
+  transform: translateY(-2px);
+}
+.idx-num {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: var(--muted);
+}
+.idx-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text);
+  font-family: var(--serif);
+}
+.idx-desc {
+  font-size: 12px;
+  color: var(--text2);
+  line-height: 1.6;
+  flex: 1;
+}
+.idx-arrow {
+  font-size: 16px;
+  color: var(--accent-local);
+  margin-top: 8px;
+  opacity: 0.7;
+}
+@media (max-width: 640px) {
+  .idx-grid { padding: 18px; }
+}
+</style>
 </head>
 <body>
-  <header class="topbar">
-    <div class="topbar-left">
-      <a class="topbar-logo" href="index.html">Frappe<span>Questions</span></a>
-      <nav class="topbar-nav">
-        <a class="nav-link active" href="index.html">Home</a>
-        <a class="nav-link" href="01-architecture.html">Architecture</a>
-        <a class="nav-link" href="02-hooks-events.html">Hooks &amp; Events</a>
-        <a class="nav-link" href="03-scheduler-workers.html">Scheduler</a>
-        <a class="nav-link" href="04-performance-db.html">Performance</a>
-        <a class="nav-link" href="05-security-permissions.html">Security</a>
-        <a class="nav-link" href="06-custom-apps-design.html">Custom Apps</a>
-        <a class="nav-link" href="07-frontend-client-scripts.html">Frontend</a>
-        <a class="nav-link" href="08-erpnext-domain.html">ERPNext</a>
-        <a class="nav-link" href="09-advanced.html">Advanced</a>
-        <a class="nav-link" href="10-deployment-devops.html">DevOps</a>
-        <a class="nav-link" href="11-testing-debugging.html">Testing</a>
-        <a class="nav-link" href="12-integrations-api.html">Integrations</a>
-      </nav>
-    </div>
-  </header>
-
-  <section class="page-hero">
-    <div class="hero-eyebrow">Interview Preparation Kit</div>
-    <h1 class="page-title">Frappe &amp; <em>ERPNext</em><br>Interview Kit</h1>
-    <p class="page-desc">Navigate the senior-level Frappe and ERPNext questions by topic. Each section page is a focused space for notes, prompts, and key concepts.</p>
-    <div class="hero-stats">
-      <div class="stat-pill"><b>12</b> Sections</div>
-      <div class="stat-pill"><b>Senior</b> Focus</div>
-    </div>
-  </section>
-
-  <main class="content">
-    <div class="section-label">Topic Sections</div>
-    <div class="nav-grid">
-      <a class="footer-nav-btn" href="01-architecture.html">
-        <span class="fnb-dir">01</span>
-        <span class="fnb-title">Architecture &amp; Internals</span>
-      </a>
-      <a class="footer-nav-btn" href="02-hooks-events.html">
-        <span class="fnb-dir">02</span>
-        <span class="fnb-title">Hooks &amp; Events</span>
-      </a>
-      <a class="footer-nav-btn" href="03-scheduler-workers.html">
-        <span class="fnb-dir">03</span>
-        <span class="fnb-title">Scheduler &amp; Workers</span>
-      </a>
-      <a class="footer-nav-btn" href="04-performance-db.html">
-        <span class="fnb-dir">04</span>
-        <span class="fnb-title">Performance &amp; Database</span>
-      </a>
-      <a class="footer-nav-btn" href="05-security-permissions.html">
-        <span class="fnb-dir">05</span>
-        <span class="fnb-title">Security &amp; Permissions</span>
-      </a>
-      <a class="footer-nav-btn" href="06-custom-apps-design.html">
-        <span class="fnb-dir">06</span>
-        <span class="fnb-title">Custom Apps &amp; Design</span>
-      </a>
-      <a class="footer-nav-btn" href="07-frontend-client-scripts.html">
-        <span class="fnb-dir">07</span>
-        <span class="fnb-title">Frontend &amp; Client Scripts</span>
-      </a>
-      <a class="footer-nav-btn" href="08-erpnext-domain.html">
-        <span class="fnb-dir">08</span>
-        <span class="fnb-title">ERPNext Domain</span>
-      </a>
-      <a class="footer-nav-btn" href="09-advanced.html">
-        <span class="fnb-dir">09</span>
-        <span class="fnb-title">Advanced Topics</span>
-      </a>
-      <a class="footer-nav-btn" href="10-deployment-devops.html">
-        <span class="fnb-dir">10</span>
-        <span class="fnb-title">Deployment &amp; DevOps</span>
-      </a>
-      <a class="footer-nav-btn" href="11-testing-debugging.html">
-        <span class="fnb-dir">11</span>
-        <span class="fnb-title">Testing &amp; Debugging</span>
-      </a>
-      <a class="footer-nav-btn" href="12-integrations-api.html">
-        <span class="fnb-dir">12</span>
-        <span class="fnb-title">Integrations &amp; API</span>
-      </a>
-    </div>
-  </main>
+<nav class="topbar">
+  <div class="topbar-left">
+    <a class="topbar-logo" href="index.html">frappe<span>/</span>erpnext</a>
+    <div class="topbar-nav"><a href="index.html" class="nav-link active">🏠 Home</a>
+<a href="01-architecture.html" class="nav-link">01 Architecture</a>
+<a href="02-hooks-events.html" class="nav-link">02 Hooks & Events</a>
+<a href="03-scheduler-workers.html" class="nav-link">03 Scheduler</a>
+<a href="04-performance-db.html" class="nav-link">04 Performance</a>
+<a href="05-security-permissions.html" class="nav-link">05 Security</a>
+<a href="06-custom-apps-design.html" class="nav-link">06 Custom Apps</a>
+<a href="07-frontend-client-scripts.html" class="nav-link">07 Frontend</a>
+<a href="08-erpnext-domain.html" class="nav-link">08 ERPNext</a>
+<a href="09-advanced.html" class="nav-link">09 Advanced</a>
+<a href="10-deployment-devops.html" class="nav-link">10 DevOps</a>
+<a href="11-testing-debugging.html" class="nav-link">11 Testing</a>
+<a href="12-integrations-api.html" class="nav-link">12 Integrations</a>
+</div>
+  </div>
+</nav>
+<div class="page-hero">
+  <div class="hero-eyebrow">Frappe · ERPNext · Senior Level</div>
+  <div class="page-title">Interview <em>Prep Kit</em></div>
+  <p class="page-desc">12 topic-focused pages. 80+ golden questions with production-grade answers. Built for developers with 4–6 years of Frappe/ERPNext experience targeting senior SDE and lead roles.</p>
+  <div class="hero-stats">
+    <div class="stat-pill"><b>12</b> Sections</div>
+    <div class="stat-pill"><b>80+</b> Questions</div>
+    <div class="stat-pill"><b>5 YOE</b> Level</div>
+    <div class="stat-pill"><b>Core + Scenario</b></div>
+  </div>
+</div>
+<div class="idx-grid"><a href="01-architecture.html" class="idx-card" style="--accent-local:#3b82f6">
+  <div class="idx-num">01</div>
+  <div class="idx-title">Architecture & Internals</div>
+  <div class="idx-desc">Request lifecycle, get_doc vs get_cached_doc, multi-tenancy, connection management</div>
+  <div class="idx-arrow">→</div>
+</a><a href="02-hooks-events.html" class="idx-card" style="--accent-local:#a78bfa">
+  <div class="idx-num">02</div>
+  <div class="idx-title">Hooks & Events</div>
+  <div class="idx-desc">hooks.py execution order, override_doctype_class, validate hook debugging</div>
+  <div class="idx-arrow">→</div>
+</a><a href="03-scheduler-workers.html" class="idx-card" style="--accent-local:#f59e0b">
+  <div class="idx-num">03</div>
+  <div class="idx-title">Scheduler & Workers</div>
+  <div class="idx-desc">Redis lock pattern, silent RQ failures, queue depth debugging, job timeout</div>
+  <div class="idx-arrow">→</div>
+</a><a href="04-performance-db.html" class="idx-card" style="--accent-local:#34d399">
+  <div class="idx-num">04</div>
+  <div class="idx-title">Performance & Database</div>
+  <div class="idx-desc">N+1 queries, 500k record reports, commit() vs savepoint() disasters, indexing</div>
+  <div class="idx-arrow">→</div>
+</a><a href="05-security-permissions.html" class="idx-card" style="--accent-local:#f87171">
+  <div class="idx-num">05</div>
+  <div class="idx-title">Security & Permissions</div>
+  <div class="idx-desc">Role vs User vs Permission Query Conditions, SQL-level enforcement, data leakage</div>
+  <div class="idx-arrow">→</div>
+</a><a href="06-custom-apps-design.html" class="idx-card" style="--accent-local:#60a5fa">
+  <div class="idx-num">06</div>
+  <div class="idx-title">Custom Apps & DocType Design</div>
+  <div class="idx-desc">Child table vs Link vs Dynamic Link, field rename migration, audit trails, patches</div>
+  <div class="idx-arrow">→</div>
+</a><a href="07-frontend-client-scripts.html" class="idx-card" style="--accent-local:#fbbf24">
+  <div class="idx-num">07</div>
+  <div class="idx-title">Frontend & Client Scripts</div>
+  <div class="idx-desc">setup vs refresh vs onload, race condition prevention, form scripting patterns</div>
+  <div class="idx-arrow">→</div>
+</a><a href="08-erpnext-domain.html" class="idx-card" style="--accent-local:#4ade80">
+  <div class="idx-num">08</div>
+  <div class="idx-title">ERPNext Domain</div>
+  <div class="idx-desc">GL Entry double-entry enforcement, approval workflows, stock valuation, payroll</div>
+  <div class="idx-arrow">→</div>
+</a><a href="09-advanced.html" class="idx-card" style="--accent-local:#c084fc">
+  <div class="idx-num">09</div>
+  <div class="idx-title">Advanced Architecture</div>
+  <div class="idx-desc">Webhook consumer design, JWT embed, real-time events, scaling patterns</div>
+  <div class="idx-arrow">→</div>
+</a><a href="10-deployment-devops.html" class="idx-card" style="--accent-local:#fb923c">
+  <div class="idx-num">10</div>
+  <div class="idx-title">Deployment & DevOps</div>
+  <div class="idx-desc">bench migrate risks, supervisor config, zero-downtime deploys, monitoring</div>
+  <div class="idx-arrow">→</div>
+</a><a href="11-testing-debugging.html" class="idx-card" style="--accent-local:#38bdf8">
+  <div class="idx-num">11</div>
+  <div class="idx-title">Testing & Debugging</div>
+  <div class="idx-desc">Unit tests in Frappe, test fixtures, debugging production issues, error tracing</div>
+  <div class="idx-arrow">→</div>
+</a><a href="12-integrations-api.html" class="idx-card" style="--accent-local:#a3e635">
+  <div class="idx-num">12</div>
+  <div class="idx-title">Integrations & APIs</div>
+  <div class="idx-desc">REST API design, webhook consumers, third-party auth, mobile app API layer</div>
+  <div class="idx-arrow">→</div>
+</a></div>
 </body>
 </html>
