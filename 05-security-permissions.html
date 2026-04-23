@@ -1,57 +1,506 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Security &amp; Permissions — Frappe Interview Kit</title>
-  <link rel="stylesheet" href="index.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Security & Permissions — Frappe/ERPNext Interview Kit</title>
+<style>/* SHARED STYLES — inlined into every page */
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=JetBrains+Mono:wght@400;600&family=Sora:wght@300;400;500;600&display=swap');
+
+:root {
+  --bg: #080b12;
+  --surface: #0e1320;
+  --card: #111827;
+  --card-hover: #141d30;
+  --border: #1e2d47;
+  --border2: #263548;
+  --accent: #3b82f6;
+  --accent-glow: #3b82f620;
+  --green: #34d399;
+  --green-glow: #34d39920;
+  --orange: #f59e0b;
+  --orange-glow: #f59e0b20;
+  --red: #f87171;
+  --text: #e2e8f0;
+  --text2: #94a3b8;
+  --muted: #4b5e7e;
+  --mono: 'JetBrains Mono', monospace;
+  --serif: 'DM Serif Display', serif;
+  --sans: 'Sora', sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 14px;
+  line-height: 1.7;
+  min-height: 100vh;
+}
+
+/* TOPBAR NAV */
+.topbar {
+  position: sticky; top: 0; z-index: 200;
+  background: rgba(8,11,18,0.92);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 32px;
+  height: 54px;
+  display: flex;
+  align-items: center;
+  gap: 0;
+  justify-content: space-between;
+}
+.topbar-left { display: flex; align-items: center; gap: 20px; }
+.topbar-logo {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--green);
+  text-decoration: none;
+  letter-spacing: 1px;
+  white-space: nowrap;
+}
+.topbar-logo span { color: var(--muted); }
+.topbar-nav {
+  display: flex;
+  gap: 2px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.topbar-nav::-webkit-scrollbar { display: none; }
+.nav-link {
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 11px;
+  font-weight: 500;
+  padding: 5px 10px;
+  border-radius: 5px;
+  white-space: nowrap;
+  transition: all 0.15s;
+  letter-spacing: 0.3px;
+}
+.nav-link:hover { color: var(--text); background: var(--surface); }
+.nav-link.active { color: var(--accent); background: var(--accent-glow); }
+
+/* PAGE HERO */
+.page-hero {
+  padding: 48px 40px 40px;
+  border-bottom: 1px solid var(--border);
+  background: linear-gradient(135deg, var(--surface) 0%, var(--bg) 100%);
+  position: relative;
+  overflow: hidden;
+}
+.page-hero::before {
+  content: '';
+  position: absolute;
+  top: -80px; right: -80px;
+  width: 400px; height: 400px;
+  background: radial-gradient(circle, var(--accent-glow) 0%, transparent 65%);
+  pointer-events: none;
+}
+.hero-eyebrow {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--green);
+  margin-bottom: 12px;
+}
+.hero-eyebrow a {
+  color: var(--muted);
+  text-decoration: none;
+  transition: color 0.15s;
+}
+.hero-eyebrow a:hover { color: var(--text); }
+.hero-eyebrow .sep { margin: 0 8px; color: var(--border2); }
+.page-title {
+  font-family: var(--serif);
+  font-size: clamp(26px, 4vw, 42px);
+  color: #fff;
+  line-height: 1.1;
+  margin-bottom: 12px;
+}
+.page-title em { color: var(--accent); font-style: italic; }
+.page-desc {
+  color: var(--text2);
+  max-width: 600px;
+  font-size: 13.5px;
+  line-height: 1.75;
+}
+.hero-stats {
+  display: flex;
+  gap: 20px;
+  margin-top: 24px;
+  flex-wrap: wrap;
+}
+.stat-pill {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--text2);
+}
+.stat-pill b { color: var(--text); font-size: 16px; display: block; }
+
+/* MAIN CONTENT AREA */
+.content { max-width: 960px; margin: 0 auto; padding: 32px 40px 80px; }
+
+/* SECTION HEADING */
+.section-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding: 28px 0 12px;
+  border-top: 1px solid var(--border);
+  margin-top: 12px;
+}
+.section-label:first-child { border-top: none; padding-top: 0; }
+
+/* Q&A CARD */
+.qa-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  margin-bottom: 12px;
+  overflow: hidden;
+  transition: border-color 0.2s;
+}
+.qa-card:hover { border-color: var(--border2); }
+
+.qa-header {
+  padding: 18px 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.qa-num {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--muted);
+  padding-top: 4px;
+  min-width: 22px;
+}
+.qa-meta { flex: 1; }
+.qa-tags {
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+  margin-bottom: 7px;
+}
+.tag {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+.tag-q { background: #3b82f618; border: 1px solid #3b82f640; color: var(--accent); }
+.tag-scenario { background: #34d39918; border: 1px solid #34d39940; color: var(--green); }
+.tag-perf { background: #f59e0b18; border: 1px solid #f59e0b40; color: var(--orange); }
+.tag-warn { background: #f8717118; border: 1px solid #f8717140; color: var(--red); }
+.tag-topic {
+  background: #1e2d47;
+  border: 1px solid var(--border2);
+  color: var(--text2);
+}
+
+.qa-question {
+  font-size: 14.5px;
+  font-weight: 500;
+  color: var(--text);
+  line-height: 1.5;
+}
+.qa-question code {
+  font-family: var(--mono);
+  background: var(--surface);
+  color: var(--orange);
+  padding: 1px 5px;
+  border-radius: 3px;
+  font-size: 12.5px;
+}
+.qa-chevron {
+  color: var(--muted);
+  font-size: 14px;
+  transition: transform 0.25s;
+  padding-top: 4px;
+  flex-shrink: 0;
+}
+.qa-card.open .qa-chevron { transform: rotate(180deg); }
+
+.qa-body {
+  display: none;
+  padding: 0 20px 20px 56px;
+  border-top: 1px solid var(--border);
+}
+.qa-card.open .qa-body { display: block; }
+
+.ans-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--green);
+  margin: 14px 0 10px;
+}
+
+.ans {
+  color: #b0bcd4;
+  font-size: 13.5px;
+  line-height: 1.85;
+}
+.ans p { margin-bottom: 9px; }
+.ans p:last-child { margin-bottom: 0; }
+.ans strong { color: var(--text); font-weight: 600; }
+.ans em { color: var(--orange); font-style: normal; }
+
+.ans code {
+  font-family: var(--mono);
+  background: #0a0f1c;
+  border: 1px solid var(--border);
+  color: var(--orange);
+  padding: 1px 5px;
+  border-radius: 3px;
+  font-size: 12px;
+}
+
+pre.codeblock {
+  font-family: var(--mono);
+  background: #060a12;
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  border-radius: 8px;
+  padding: 14px 16px;
+  font-size: 12px;
+  line-height: 1.75;
+  color: #8fa8cc;
+  overflow-x: auto;
+  margin: 12px 0;
+  white-space: pre;
+}
+pre.codeblock .kw { color: #60a5fa; }
+pre.codeblock .fn { color: #a78bfa; }
+pre.codeblock .str { color: #34d399; }
+pre.codeblock .cm { color: #3d5273; font-style: italic; }
+pre.codeblock .num { color: var(--orange); }
+
+.tip {
+  background: #34d39910;
+  border: 1px solid #34d39928;
+  border-radius: 8px;
+  padding: 11px 14px;
+  margin-top: 12px;
+  font-size: 13px;
+  color: #a7f3d0;
+}
+.tip::before { content: '💡 '; }
+
+.warn {
+  background: #f8717110;
+  border: 1px solid #f8717130;
+  border-radius: 8px;
+  padding: 11px 14px;
+  margin-top: 12px;
+  font-size: 13px;
+  color: #fca5a5;
+}
+.warn::before { content: '⚠️ '; }
+
+/* EXPAND ALL TOOLBAR */
+.toolbar {
+  display: flex;
+  gap: 8px;
+  padding: 16px 0 4px;
+  flex-wrap: wrap;
+}
+.tb-btn {
+  background: var(--card);
+  border: 1px solid var(--border);
+  color: var(--text2);
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-family: var(--sans);
+  cursor: pointer;
+  transition: all 0.15s;
+  font-weight: 500;
+}
+.tb-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+/* FOOTER NAV */
+.page-footer {
+  border-top: 1px solid var(--border);
+  padding: 32px 40px;
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.footer-nav-btn {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  text-decoration: none;
+  padding: 12px 18px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--card);
+  transition: all 0.15s;
+  min-width: 160px;
+}
+.footer-nav-btn:hover { border-color: var(--accent); background: var(--card-hover); }
+.footer-nav-btn .fnb-dir {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.footer-nav-btn .fnb-title {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text);
+}
+.footer-nav-btn.next { text-align: right; }
+
+@media (max-width: 640px) {
+  .topbar { padding: 0 16px; }
+  .page-hero, .content, .page-footer { padding-left: 18px; padding-right: 18px; }
+  .qa-body { padding-left: 18px; }
+  .topbar-nav { display: none; }
+}
+</style>
 </head>
 <body>
-  <header class="topbar">
-    <div class="topbar-left">
-      <a class="topbar-logo" href="index.html">Frappe<span>Questions</span></a>
-      <nav class="topbar-nav">
-        <a class="nav-link" href="index.html">Home</a>
-        <a class="nav-link" href="01-architecture.html">Architecture</a>
-        <a class="nav-link" href="02-hooks-events.html">Hooks &amp; Events</a>
-        <a class="nav-link" href="03-scheduler-workers.html">Scheduler</a>
-        <a class="nav-link" href="04-performance-db.html">Performance</a>
-        <a class="nav-link active" href="05-security-permissions.html">Security</a>
-        <a class="nav-link" href="06-custom-apps-design.html">Custom Apps</a>
-        <a class="nav-link" href="07-frontend-client-scripts.html">Frontend</a>
-        <a class="nav-link" href="08-erpnext-domain.html">ERPNext</a>
-        <a class="nav-link" href="09-advanced.html">Advanced</a>
-        <a class="nav-link" href="10-deployment-devops.html">DevOps</a>
-        <a class="nav-link" href="11-testing-debugging.html">Testing</a>
-        <a class="nav-link" href="12-integrations-api.html">Integrations</a>
-      </nav>
+<nav class="topbar">
+  <div class="topbar-left">
+    <a class="topbar-logo" href="index.html">frappe<span>/</span>erpnext</a>
+    <div class="topbar-nav"><a href="index.html" class="nav-link">🏠 Home</a>
+<a href="01-architecture.html" class="nav-link">01 Architecture</a>
+<a href="02-hooks-events.html" class="nav-link">02 Hooks & Events</a>
+<a href="03-scheduler-workers.html" class="nav-link">03 Scheduler</a>
+<a href="04-performance-db.html" class="nav-link">04 Performance</a>
+<a href="05-security-permissions.html" class="nav-link active">05 Security</a>
+<a href="06-custom-apps-design.html" class="nav-link">06 Custom Apps</a>
+<a href="07-frontend-client-scripts.html" class="nav-link">07 Frontend</a>
+<a href="08-erpnext-domain.html" class="nav-link">08 ERPNext</a>
+<a href="09-advanced.html" class="nav-link">09 Advanced</a>
+<a href="10-deployment-devops.html" class="nav-link">10 DevOps</a>
+<a href="11-testing-debugging.html" class="nav-link">11 Testing</a>
+<a href="12-integrations-api.html" class="nav-link">12 Integrations</a>
+</div>
+  </div>
+</nav>
+<div class="page-hero">
+  <div class="hero-eyebrow"><a href="index.html">Interview Kit</a><span class="sep">/</span>Security & Permissions</div>
+  <div class="page-title">Security & Permissions</div>
+  <p class="page-desc">Role vs User vs SQL-level permissions, multi-company data leakage, and securing whitelisted endpoints.</p>
+</div>
+<div class="content">
+<div class="toolbar">
+  <button class="tb-btn" onclick="document.querySelectorAll('.qa-card').forEach(c=>c.classList.add('open'))">Expand All</button>
+  <button class="tb-btn" onclick="document.querySelectorAll('.qa-card').forEach(c=>c.classList.remove('open'))">Collapse All</button>
+</div>
+<div class="section-label">Permission Layers</div><div class="qa-card">
+  <div class="qa-header" onclick="t(this)">
+    <div class="qa-num">Q01</div>
+    <div class="qa-meta">
+      <div class="qa-tags"><span class="tag tag-q">CORE</span><span class="tag tag-topic">PERMISSIONS</span></div>
+      <div class="qa-question">Explain the three layers of Frappe permissions: Role Permissions, User Permissions, and Permission Query Conditions. Which is enforced at SQL level?</div>
     </div>
-  </header>
+    <div class="qa-chevron">▾</div>
+  </div>
+  <div class="qa-body">
+    <div class="ans-label">Answer</div>
+    <div class="ans"><p><strong>Role Permissions (DocPerm):</strong> Coarse-grained CRUD access at DocType level for a Role. 'Sales User can Read+Write Sales Order.' Checked in Python before any DB call.</p><p><strong>User Permissions:</strong> Row-level restrictions. 'User X can only see records where Company = Acme.' Stored in <code>tabUser Permission</code>. Frappe filters list views and get_doc calls based on these.</p><p><strong>Permission Query Conditions:</strong> A Python function in <code>hooks.py</code> that dynamically appends a WHERE clause to every query for a DocType. <strong>This is the only layer enforced at SQL level.</strong></p><pre class="codeblock"># hooks.py
+permission_query_conditions = {
+    "Sales Order": "myapp.permissions.get_so_query_condition"
+}
 
-  <section class="page-hero">
-    <div class="hero-eyebrow"><a href="index.html">Home</a><span class="sep">/</span>Section 05</div>
-    <h1 class="page-title">Security &amp; <em>Permissions</em></h1>
-    <p class="page-desc">Role permissions, user permissions, API security, and production hardening for Frappe sites.</p>
-    <div class="hero-stats">
-      <div class="stat-pill"><b>05</b> Section</div>
-      <div class="stat-pill"><b>Security</b> Focus</div>
+# myapp/permissions.py
+def get_so_query_condition(user):
+    if not user: user = frappe.session.user
+    if "Sales Manager" in frappe.get_roles(user):
+        return ""  # no restriction
+    # Injected directly into WHERE clause of every SELECT
+    return f"(`tabSales Order`.owner = '{frappe.db.escape(user)}')" </pre><p><strong>Key distinction:</strong> User Permissions are Python-evaluated and can be accidentally bypassed by raw <code>frappe.db.sql()</code> without explicit filters. Permission Query Conditions are injected into all ORM-generated queries — much harder to bypass.</p><div class="warn">Always escape user input in permission_query_conditions using frappe.db.escape() to prevent SQL injection.</div></div>
+  </div>
+</div><div class="section-label">Security Vulnerabilities & Fixes</div><div class="qa-card">
+  <div class="qa-header" onclick="t(this)">
+    <div class="qa-num">Q02</div>
+    <div class="qa-meta">
+      <div class="qa-tags"><span class="tag tag-scenario">SCENARIO</span><span class="tag tag-topic">SECURITY</span></div>
+      <div class="qa-question">A whitelisted API endpoint is leaking data from other companies in a multi-company setup. What went wrong and how do you fix it?</div>
     </div>
-  </section>
+    <div class="qa-chevron">▾</div>
+  </div>
+  <div class="qa-body">
+    <div class="ans-label">Answer</div>
+    <div class="ans"><p><strong>What went wrong:</strong></p><p>1. The <code>@frappe.whitelist()</code> function uses <code>frappe.db.sql()</code> or <code>frappe.db.get_all()</code> without a company filter — bypassing User Permissions entirely.</p><p>2. No <code>has_permission()</code> call on returned documents.</p><p><strong>Secure fix:</strong></p><pre class="codeblock">@frappe.whitelist()
+def get_my_invoices(company=None):
+    user = frappe.session.user
 
-  <main class="content">
-    <div class="section-label">Starter Prompts</div>
-    <p class="ans">Document key permission models, least-privilege strategies, and audit-ready security practices.</p>
-  </main>
+    # 1. Get user's allowed companies from User Permissions
+    allowed = [p.for_value for p in frappe.get_all(
+        "User Permission",
+        filters={"user": user, "allow": "Company"},
+        fields=["for_value"],
+        ignore_permissions=True
+    )]
 
-  <footer class="page-footer">
-    <a class="footer-nav-btn" href="04-performance-db.html">
-      <span class="fnb-dir">Prev</span>
-      <span class="fnb-title">Performance &amp; DB</span>
-    </a>
-    <a class="footer-nav-btn next" href="06-custom-apps-design.html">
-      <span class="fnb-dir">Next</span>
-      <span class="fnb-title">Custom Apps &amp; Design</span>
-    </a>
-  </footer>
+    if not allowed:
+        frappe.throw("No company access", frappe.PermissionError)
+
+    # 2. If company param given, verify user has access to it
+    if company and company not in allowed:
+        frappe.throw("Access denied", frappe.PermissionError)
+
+    filters = {"company": ["in", allowed], "docstatus": 1}
+    if company:
+        filters["company"] = company
+
+    return frappe.get_list("Sales Invoice",
+        filters=filters,
+        fields=["name", "customer", "grand_total"]
+    )</pre><div class="tip">Never return raw DB results from a whitelisted method without explicit company/owner scoping. Treat every whitelist endpoint as a public API endpoint.</div></div>
+  </div>
+</div><div class="qa-card">
+  <div class="qa-header" onclick="t(this)">
+    <div class="qa-num">Q03</div>
+    <div class="qa-meta">
+      <div class="qa-tags"><span class="tag tag-q">CORE</span><span class="tag tag-topic">SECURITY</span></div>
+      <div class="qa-question">What is the difference between <code>@frappe.whitelist()</code> and <code>@frappe.whitelist(allow_guest=True)</code>? What are the risks of each?</div>
+    </div>
+    <div class="qa-chevron">▾</div>
+  </div>
+  <div class="qa-body">
+    <div class="ans-label">Answer</div>
+    <div class="ans"><p><strong>@frappe.whitelist()</strong> — callable by any logged-in user. Frappe validates session cookie or API key. If called without auth, returns 403.</p><p><strong>@frappe.whitelist(allow_guest=True)</strong> — callable by unauthenticated users. <code>frappe.session.user</code> will be <code>Guest</code>. Exposed publicly — accessible via curl with no credentials.</p><p><strong>Risks of allow_guest:</strong></p><p>1. No rate limiting by default — vulnerable to scraping and brute-force</p><p>2. If you accidentally call frappe.get_list() without filters, you expose all records</p><p>3. No audit trail — all calls appear as 'Guest' in logs</p><p><strong>Securing allow_guest endpoints:</strong></p><pre class="codeblock">@frappe.whitelist(allow_guest=True)
+def public_product_catalog():
+    # Only return explicitly public data
+    return frappe.get_list("Item",
+        filters={"show_in_website": 1, "disabled": 0},
+        fields=["item_name", "website_image", "web_long_description"],
+        limit=50  # always limit guest endpoints
+    )</pre><div class="warn">Never use allow_guest=True for endpoints that read user-specific, financial, or PII data.</div></div>
+  </div>
+</div>
+</div>
+<div class="page-footer"><a href="04-performance-db.html" class="footer-nav-btn"><span class="fnb-dir">← Previous</span><span class="fnb-title">Performance & DB</span></a><a href="06-custom-apps-design.html" class="footer-nav-btn next"><span class="fnb-dir">Next →</span><span class="fnb-title">Custom Apps & Design</span></a></div>
+<script>
+function t(h){h.closest('.qa-card').classList.toggle('open');}
+</script>
 </body>
 </html>
