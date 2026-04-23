@@ -1,57 +1,533 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Advanced Topics — Frappe Interview Kit</title>
-  <link rel="stylesheet" href="index.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Advanced Architecture — Frappe/ERPNext Interview Kit</title>
+<style>/* SHARED STYLES — inlined into every page */
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=JetBrains+Mono:wght@400;600&family=Sora:wght@300;400;500;600&display=swap');
+
+:root {
+  --bg: #080b12;
+  --surface: #0e1320;
+  --card: #111827;
+  --card-hover: #141d30;
+  --border: #1e2d47;
+  --border2: #263548;
+  --accent: #3b82f6;
+  --accent-glow: #3b82f620;
+  --green: #34d399;
+  --green-glow: #34d39920;
+  --orange: #f59e0b;
+  --orange-glow: #f59e0b20;
+  --red: #f87171;
+  --text: #e2e8f0;
+  --text2: #94a3b8;
+  --muted: #4b5e7e;
+  --mono: 'JetBrains Mono', monospace;
+  --serif: 'DM Serif Display', serif;
+  --sans: 'Sora', sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 14px;
+  line-height: 1.7;
+  min-height: 100vh;
+}
+
+/* TOPBAR NAV */
+.topbar {
+  position: sticky; top: 0; z-index: 200;
+  background: rgba(8,11,18,0.92);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 32px;
+  height: 54px;
+  display: flex;
+  align-items: center;
+  gap: 0;
+  justify-content: space-between;
+}
+.topbar-left { display: flex; align-items: center; gap: 20px; }
+.topbar-logo {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--green);
+  text-decoration: none;
+  letter-spacing: 1px;
+  white-space: nowrap;
+}
+.topbar-logo span { color: var(--muted); }
+.topbar-nav {
+  display: flex;
+  gap: 2px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.topbar-nav::-webkit-scrollbar { display: none; }
+.nav-link {
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 11px;
+  font-weight: 500;
+  padding: 5px 10px;
+  border-radius: 5px;
+  white-space: nowrap;
+  transition: all 0.15s;
+  letter-spacing: 0.3px;
+}
+.nav-link:hover { color: var(--text); background: var(--surface); }
+.nav-link.active { color: var(--accent); background: var(--accent-glow); }
+
+/* PAGE HERO */
+.page-hero {
+  padding: 48px 40px 40px;
+  border-bottom: 1px solid var(--border);
+  background: linear-gradient(135deg, var(--surface) 0%, var(--bg) 100%);
+  position: relative;
+  overflow: hidden;
+}
+.page-hero::before {
+  content: '';
+  position: absolute;
+  top: -80px; right: -80px;
+  width: 400px; height: 400px;
+  background: radial-gradient(circle, var(--accent-glow) 0%, transparent 65%);
+  pointer-events: none;
+}
+.hero-eyebrow {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--green);
+  margin-bottom: 12px;
+}
+.hero-eyebrow a {
+  color: var(--muted);
+  text-decoration: none;
+  transition: color 0.15s;
+}
+.hero-eyebrow a:hover { color: var(--text); }
+.hero-eyebrow .sep { margin: 0 8px; color: var(--border2); }
+.page-title {
+  font-family: var(--serif);
+  font-size: clamp(26px, 4vw, 42px);
+  color: #fff;
+  line-height: 1.1;
+  margin-bottom: 12px;
+}
+.page-title em { color: var(--accent); font-style: italic; }
+.page-desc {
+  color: var(--text2);
+  max-width: 600px;
+  font-size: 13.5px;
+  line-height: 1.75;
+}
+.hero-stats {
+  display: flex;
+  gap: 20px;
+  margin-top: 24px;
+  flex-wrap: wrap;
+}
+.stat-pill {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--text2);
+}
+.stat-pill b { color: var(--text); font-size: 16px; display: block; }
+
+/* MAIN CONTENT AREA */
+.content { max-width: 960px; margin: 0 auto; padding: 32px 40px 80px; }
+
+/* SECTION HEADING */
+.section-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding: 28px 0 12px;
+  border-top: 1px solid var(--border);
+  margin-top: 12px;
+}
+.section-label:first-child { border-top: none; padding-top: 0; }
+
+/* Q&A CARD */
+.qa-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  margin-bottom: 12px;
+  overflow: hidden;
+  transition: border-color 0.2s;
+}
+.qa-card:hover { border-color: var(--border2); }
+
+.qa-header {
+  padding: 18px 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.qa-num {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--muted);
+  padding-top: 4px;
+  min-width: 22px;
+}
+.qa-meta { flex: 1; }
+.qa-tags {
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+  margin-bottom: 7px;
+}
+.tag {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+.tag-q { background: #3b82f618; border: 1px solid #3b82f640; color: var(--accent); }
+.tag-scenario { background: #34d39918; border: 1px solid #34d39940; color: var(--green); }
+.tag-perf { background: #f59e0b18; border: 1px solid #f59e0b40; color: var(--orange); }
+.tag-warn { background: #f8717118; border: 1px solid #f8717140; color: var(--red); }
+.tag-topic {
+  background: #1e2d47;
+  border: 1px solid var(--border2);
+  color: var(--text2);
+}
+
+.qa-question {
+  font-size: 14.5px;
+  font-weight: 500;
+  color: var(--text);
+  line-height: 1.5;
+}
+.qa-question code {
+  font-family: var(--mono);
+  background: var(--surface);
+  color: var(--orange);
+  padding: 1px 5px;
+  border-radius: 3px;
+  font-size: 12.5px;
+}
+.qa-chevron {
+  color: var(--muted);
+  font-size: 14px;
+  transition: transform 0.25s;
+  padding-top: 4px;
+  flex-shrink: 0;
+}
+.qa-card.open .qa-chevron { transform: rotate(180deg); }
+
+.qa-body {
+  display: none;
+  padding: 0 20px 20px 56px;
+  border-top: 1px solid var(--border);
+}
+.qa-card.open .qa-body { display: block; }
+
+.ans-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--green);
+  margin: 14px 0 10px;
+}
+
+.ans {
+  color: #b0bcd4;
+  font-size: 13.5px;
+  line-height: 1.85;
+}
+.ans p { margin-bottom: 9px; }
+.ans p:last-child { margin-bottom: 0; }
+.ans strong { color: var(--text); font-weight: 600; }
+.ans em { color: var(--orange); font-style: normal; }
+
+.ans code {
+  font-family: var(--mono);
+  background: #0a0f1c;
+  border: 1px solid var(--border);
+  color: var(--orange);
+  padding: 1px 5px;
+  border-radius: 3px;
+  font-size: 12px;
+}
+
+pre.codeblock {
+  font-family: var(--mono);
+  background: #060a12;
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  border-radius: 8px;
+  padding: 14px 16px;
+  font-size: 12px;
+  line-height: 1.75;
+  color: #8fa8cc;
+  overflow-x: auto;
+  margin: 12px 0;
+  white-space: pre;
+}
+pre.codeblock .kw { color: #60a5fa; }
+pre.codeblock .fn { color: #a78bfa; }
+pre.codeblock .str { color: #34d399; }
+pre.codeblock .cm { color: #3d5273; font-style: italic; }
+pre.codeblock .num { color: var(--orange); }
+
+.tip {
+  background: #34d39910;
+  border: 1px solid #34d39928;
+  border-radius: 8px;
+  padding: 11px 14px;
+  margin-top: 12px;
+  font-size: 13px;
+  color: #a7f3d0;
+}
+.tip::before { content: '💡 '; }
+
+.warn {
+  background: #f8717110;
+  border: 1px solid #f8717130;
+  border-radius: 8px;
+  padding: 11px 14px;
+  margin-top: 12px;
+  font-size: 13px;
+  color: #fca5a5;
+}
+.warn::before { content: '⚠️ '; }
+
+/* EXPAND ALL TOOLBAR */
+.toolbar {
+  display: flex;
+  gap: 8px;
+  padding: 16px 0 4px;
+  flex-wrap: wrap;
+}
+.tb-btn {
+  background: var(--card);
+  border: 1px solid var(--border);
+  color: var(--text2);
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-family: var(--sans);
+  cursor: pointer;
+  transition: all 0.15s;
+  font-weight: 500;
+}
+.tb-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+/* FOOTER NAV */
+.page-footer {
+  border-top: 1px solid var(--border);
+  padding: 32px 40px;
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.footer-nav-btn {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  text-decoration: none;
+  padding: 12px 18px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--card);
+  transition: all 0.15s;
+  min-width: 160px;
+}
+.footer-nav-btn:hover { border-color: var(--accent); background: var(--card-hover); }
+.footer-nav-btn .fnb-dir {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.footer-nav-btn .fnb-title {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text);
+}
+.footer-nav-btn.next { text-align: right; }
+
+@media (max-width: 640px) {
+  .topbar { padding: 0 16px; }
+  .page-hero, .content, .page-footer { padding-left: 18px; padding-right: 18px; }
+  .qa-body { padding-left: 18px; }
+  .topbar-nav { display: none; }
+}
+</style>
 </head>
 <body>
-  <header class="topbar">
-    <div class="topbar-left">
-      <a class="topbar-logo" href="index.html">Frappe<span>Questions</span></a>
-      <nav class="topbar-nav">
-        <a class="nav-link" href="index.html">Home</a>
-        <a class="nav-link" href="01-architecture.html">Architecture</a>
-        <a class="nav-link" href="02-hooks-events.html">Hooks &amp; Events</a>
-        <a class="nav-link" href="03-scheduler-workers.html">Scheduler</a>
-        <a class="nav-link" href="04-performance-db.html">Performance</a>
-        <a class="nav-link" href="05-security-permissions.html">Security</a>
-        <a class="nav-link" href="06-custom-apps-design.html">Custom Apps</a>
-        <a class="nav-link" href="07-frontend-client-scripts.html">Frontend</a>
-        <a class="nav-link" href="08-erpnext-domain.html">ERPNext</a>
-        <a class="nav-link active" href="09-advanced.html">Advanced</a>
-        <a class="nav-link" href="10-deployment-devops.html">DevOps</a>
-        <a class="nav-link" href="11-testing-debugging.html">Testing</a>
-        <a class="nav-link" href="12-integrations-api.html">Integrations</a>
-      </nav>
+<nav class="topbar">
+  <div class="topbar-left">
+    <a class="topbar-logo" href="index.html">frappe<span>/</span>erpnext</a>
+    <div class="topbar-nav"><a href="index.html" class="nav-link">🏠 Home</a>
+<a href="01-architecture.html" class="nav-link">01 Architecture</a>
+<a href="02-hooks-events.html" class="nav-link">02 Hooks & Events</a>
+<a href="03-scheduler-workers.html" class="nav-link">03 Scheduler</a>
+<a href="04-performance-db.html" class="nav-link">04 Performance</a>
+<a href="05-security-permissions.html" class="nav-link">05 Security</a>
+<a href="06-custom-apps-design.html" class="nav-link">06 Custom Apps</a>
+<a href="07-frontend-client-scripts.html" class="nav-link">07 Frontend</a>
+<a href="08-erpnext-domain.html" class="nav-link">08 ERPNext</a>
+<a href="09-advanced.html" class="nav-link active">09 Advanced</a>
+<a href="10-deployment-devops.html" class="nav-link">10 DevOps</a>
+<a href="11-testing-debugging.html" class="nav-link">11 Testing</a>
+<a href="12-integrations-api.html" class="nav-link">12 Integrations</a>
+</div>
+  </div>
+</nav>
+<div class="page-hero">
+  <div class="hero-eyebrow"><a href="index.html">Interview Kit</a><span class="sep">/</span>Advanced Architecture</div>
+  <div class="page-title">Advanced Architecture</div>
+  <p class="page-desc">Webhook consumer design, JWT embed security, production slowdown triage, and scaling patterns.</p>
+</div>
+<div class="content">
+<div class="toolbar">
+  <button class="tb-btn" onclick="document.querySelectorAll('.qa-card').forEach(c=>c.classList.add('open'))">Expand All</button>
+  <button class="tb-btn" onclick="document.querySelectorAll('.qa-card').forEach(c=>c.classList.remove('open'))">Collapse All</button>
+</div>
+<div class="section-label">Integration Patterns</div><div class="qa-card">
+  <div class="qa-header" onclick="t(this)">
+    <div class="qa-num">Q01</div>
+    <div class="qa-meta">
+      <div class="qa-tags"><span class="tag tag-scenario">SCENARIO</span><span class="tag tag-topic">ARCHITECTURE</span></div>
+      <div class="qa-question">Design a reliable webhook consumer that processes 200+ payment events/minute and creates ERPNext Payment Entries without blocking web workers.</div>
     </div>
-  </header>
+    <div class="qa-chevron">▾</div>
+  </div>
+  <div class="qa-body">
+    <div class="ans-label">Answer</div>
+    <div class="ans"><p><strong>Architecture — thin receiver + background processor:</strong></p><pre class="codeblock"># 1. Thin whitelisted receiver — does ONLY:
+#    - Validate HMAC, store raw payload, return 200 fast
+@frappe.whitelist(allow_guest=True)
+def receive_payment_event():
+    raw = frappe.request.data
+    sig = frappe.request.headers.get("X-Signature")
+    if not verify_hmac(raw, sig):
+        frappe.throw("Invalid signature", frappe.AuthenticationError)
 
-  <section class="page-hero">
-    <div class="hero-eyebrow"><a href="index.html">Home</a><span class="sep">/</span>Section 09</div>
-    <h1 class="page-title">Advanced <em>Topics</em></h1>
-    <p class="page-desc">Deep dives into advanced patterns, large-scale deployments, and complex integrations.</p>
-    <div class="hero-stats">
-      <div class="stat-pill"><b>09</b> Section</div>
-      <div class="stat-pill"><b>Advanced</b> Focus</div>
+    log = frappe.get_doc({
+        "doctype": "Webhook Log",
+        "source": "PaymentGateway",
+        "payload": raw.decode("utf-8"),
+        "status": "Pending",
+        "idempotency_key": frappe.request.headers.get("X-Idempotency-Key")
+    }).insert(ignore_permissions=True)
+    frappe.db.commit()
+
+    frappe.enqueue(
+        "myapp.payments.process_payment_event",
+        log_name=log.name,
+        queue="short",
+        timeout=120
+    )
+    return {"status": "queued"}</pre><pre class="codeblock"># 2. Background processor — idempotent
+def process_payment_event(log_name):
+    log = frappe.get_doc("Webhook Log", log_name)
+    if log.status != "Pending":
+        return  # already processed (retry guard)
+
+    payload = frappe.parse_json(log.payload)
+    txn_id = payload.get("transaction_id")
+
+    # Idempotency: check if already created
+    if frappe.db.exists("Payment Entry",
+                         {"custom_txn_id": txn_id}):
+        log.db_set("status", "Duplicate")
+        return
+
+    try:
+        create_payment_entry(payload)
+        log.db_set("status", "Processed")
+        frappe.db.commit()
+    except Exception:
+        log.db_set("status", "Failed")
+        frappe.log_error(frappe.get_traceback(), log_name)</pre><div class="tip">For burst traffic, add multiple short queue workers in Procfile. The receiver always returns in < 50ms — it never does heavy work.</div></div>
+  </div>
+</div><div class="section-label">JWT & Embed Security</div><div class="qa-card">
+  <div class="qa-header" onclick="t(this)">
+    <div class="qa-num">Q02</div>
+    <div class="qa-meta">
+      <div class="qa-tags"><span class="tag tag-q">CORE</span><span class="tag tag-topic">SECURITY</span></div>
+      <div class="qa-question">How do you implement JWT-based Metabase/Superset dashboard embedding securely? What are the token leakage risks?</div>
     </div>
-  </section>
+    <div class="qa-chevron">▾</div>
+  </div>
+  <div class="qa-body">
+    <div class="ans-label">Answer</div>
+    <div class="ans"><p><strong>Flow:</strong> Frappe backend generates a short-lived signed JWT. Frontend receives token and passes it as URL param to iframe src. Token is never stored persistently.</p><pre class="codeblock">import jwt, time
 
-  <main class="content">
-    <div class="section-label">Starter Prompts</div>
-    <p class="ans">Document high-complexity scenarios, scaling lessons, and challenging interview prompts.</p>
-  </main>
+@frappe.whitelist()
+def get_embed_token(dashboard_id):
+    user = frappe.session.user
+    secret = frappe.conf.metabase_secret_key
 
-  <footer class="page-footer">
-    <a class="footer-nav-btn" href="08-erpnext-domain.html">
-      <span class="fnb-dir">Prev</span>
-      <span class="fnb-title">ERPNext Domain</span>
-    </a>
-    <a class="footer-nav-btn next" href="10-deployment-devops.html">
-      <span class="fnb-dir">Next</span>
-      <span class="fnb-title">Deployment &amp; DevOps</span>
-    </a>
-  </footer>
+    # RBAC: verify user has access to this dashboard
+    verify_dashboard_access(user, dashboard_id)
+
+    payload = {
+        "resource": {"dashboard": int(dashboard_id)},
+        "params": {
+            "user_email": user,      # row-level filter in dashboard
+            "company": get_user_company(user)
+        },
+        "exp": round(time.time()) + 600  # 10 min max
+    }
+    token = jwt.encode(payload, secret, algorithm="HS256")
+    return token</pre><p><strong>Token leakage risks:</strong></p><p>1. <strong>Token in URL</strong> — appears in browser history, server logs, Referer headers. Mitigation: use POST endpoint to receive token, store only in React state/memory.</p><p>2. <strong>Long expiry</strong> — leaked token works until expiry. Keep ≤ 10 minutes.</p><p>3. <strong>No audience binding</strong> — token works from any IP if stolen. Short TTL is the only mitigation in Metabase's JWT embed model.</p><p>4. <strong>Logging the token</strong> — ensure your Frappe access logs don't capture the token. Use POST, not GET, for token delivery.</p></div>
+  </div>
+</div><div class="section-label">Real-time & Scaling</div><div class="qa-card">
+  <div class="qa-header" onclick="t(this)">
+    <div class="qa-num">Q03</div>
+    <div class="qa-meta">
+      <div class="qa-tags"><span class="tag tag-scenario">SCENARIO</span><span class="tag tag-topic">SCALING</span></div>
+      <div class="qa-question">Production site is suddenly 8–10 seconds per page with no code deploy. Walk through your complete triage process.</div>
+    </div>
+    <div class="qa-chevron">▾</div>
+  </div>
+  <div class="qa-body">
+    <div class="ans-label">Answer</div>
+    <div class="ans"><p><strong>Systematic triage:</strong></p><p>1. <strong>Check Redis:</strong> <code>redis-cli INFO memory</code> — if <code>used_memory</code> near <code>maxmemory</code>, Redis is evicting keys. Every cache miss hits DB directly → DB overload.</p><p>2. <strong>Check MariaDB slow queries:</strong> <code>SHOW FULL PROCESSLIST</code> — look for queries in 'Waiting for lock' or running > 2s. A stalled background job can hold row locks.</p><p>3. <strong>Check worker queue depth:</strong> <code>rq info</code> — thousands of backed-up jobs can starve Redis responses for web workers.</p><p>4. <strong>Check Gunicorn worker states:</strong> <code>ps aux | grep gunicorn</code> — D-state (disk wait) means I/O bottleneck. Check <code>iostat -x 1</code>.</p><p>5. <strong>Check Frappe Error Log:</strong> Recurring exceptions can cause retry storms that flood DB.</p><p>6. <strong>Check for table lock:</strong> <code>SHOW ENGINE INNODB STATUS\\G</code> — look for TRANSACTIONS section, find blocking query.</p><pre class="codeblock">-- Find blocking queries in MariaDB
+SELECT r.trx_id waiting_trx,
+       r.trx_query waiting_query,
+       b.trx_id blocking_trx,
+       b.trx_query blocking_query
+FROM information_schema.innodb_lock_waits w
+JOIN information_schema.innodb_trx b ON b.trx_id = w.blocking_trx_id
+JOIN information_schema.innodb_trx r ON r.trx_id = w.requesting_trx_id;</pre><div class="tip">Most common root cause without a code change: data volume crossed an index cardinality threshold. A query that was fast at 10k rows is now full-scanning at 500k rows. Add the missing index and it resolves immediately.</div></div>
+  </div>
+</div>
+</div>
+<div class="page-footer"><a href="08-erpnext-domain.html" class="footer-nav-btn"><span class="fnb-dir">← Previous</span><span class="fnb-title">ERPNext Domain</span></a><a href="10-deployment-devops.html" class="footer-nav-btn next"><span class="fnb-dir">Next →</span><span class="fnb-title">Deployment & DevOps</span></a></div>
+<script>
+function t(h){h.closest('.qa-card').classList.toggle('open');}
+</script>
 </body>
 </html>
